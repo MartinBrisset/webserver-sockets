@@ -1,14 +1,18 @@
 const express = require('express');
+const morgan = require('morgan');
 const cors = require('cors');
 const fileUpload = require('express-fileupload');
 
 const { dbConnection } = require('../database/config');
+const { sockerController } = require('../sockets/socketController');
 
 class Server {
 
     constructor() {
         this.app  = express();
         this.port = process.env.PORT;
+        this.server = require('http').createServer( this.app )
+        this.io = require('socket.io')(this.server)
 
         this.paths = {
             auth:       '/api/auth',
@@ -28,6 +32,9 @@ class Server {
 
         // Rutas de mi aplicación
         this.routes();
+
+        // Sockets
+        this.sockets()
     }
 
     async conectarDB() {
@@ -36,6 +43,9 @@ class Server {
 
 
     middlewares() {
+
+        //muestra la ruta en la consola
+        this.app.use(morgan('dev')); 
 
         // CORS
         this.app.use( cors() );
@@ -66,8 +76,12 @@ class Server {
         
     }
 
+    sockets() {
+        this.io.on('connection', sockerController )
+    }
+
     listen() {
-        this.app.listen( this.port, () => {
+        this.server.listen( this.port, () => {
             console.log('Servidor corriendo en puerto', this.port );
         });
     }

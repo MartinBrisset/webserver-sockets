@@ -2,7 +2,7 @@
 
 node_modules/
 
-config/config.js
+.env
 
 uploads/productos/**.*
 uploads/usuarios/**.*
