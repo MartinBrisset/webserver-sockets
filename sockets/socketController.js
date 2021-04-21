@@ -1,6 +1,6 @@
 const sockerController = ( socket ) => {
 
-    console.log('cliente', socket.id);
+    
 
 }
 
